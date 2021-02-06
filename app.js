@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const pg = require('pg');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -35,6 +36,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+const pool = new pg.Pool({
+  host: "localhost",
+  database: "artist_chat",
+  user: "enoki",
+  port: 5432
+})
+
+pool.connect()
+
+pool.query('SELECT NOW()', (err, res) => {
+  //console.log(err, res)
+  console.log(res.rows[0])
+  pool.end()
+})
+
+const sql = "INSERT INTO users (name, email) VALUES ($1, $2)"
+const values = ['Enoki', 'EnokiEnoki']
+pool.query(sql, values)
+    .then(res => {
+        console.log(res)
+        pool.end()
+    })
+    .catch(e => console.error(e.stack))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
