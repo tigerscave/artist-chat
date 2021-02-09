@@ -46,23 +46,18 @@ const pool = new pg.Pool({
 
 pool.connect()
 
-pool.query('SELECT NOW()', (err, res) => {
-  //console.log(err, res)
-  console.log(res.rows[0])
-  pool.end()
-})
-
 const sql = "INSERT INTO users (name, email) VALUES ($1, $2)"
-const values = ['Enoki', 'EnokiEnoki']
-pool.query(sql, values)
-    .then(res => {
-        console.log(res)
-        pool.end()
-    })
-    .catch(e => console.error(e.stack))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/create', function(req, res, next) {
+  const values = [req.body.name, 'email']
+  pool.query(sql, values)
+    .then(res => {
+        pool.end()
+    })
+    .catch(e => console.error(e.stack))
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

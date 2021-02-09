@@ -1,16 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
+import Index from './pages/Index';
+import CreateRoom from './pages/CreateRoom';
+import EnterRoom from './pages/EnterRoom';
+import ChatRoom from './pages/ChatRoom';
+
+
 
 const App = () => {
-  const [comment, setComment] = useState('2')
-
-  useEffect(() => {
-    fetch('http://localhost:3001/')
-      .then(res => res.json())
-      .then(users => setComment(users.id))
-  }, [])
-
-  return <h1>Hello! {comment}</h1>
+  return (
+    <div>
+      <Switch>
+        <Route path="/" exact component={Index} />
+        <Route path="/CreateRoom" exact component={CreateRoom} />
+        <Route path="/EnterRoom" exact component={EnterRoom} />
+        <Route path="/ChatRoom" exact component={ChatRoom} />
+      </Switch>
+    </div>
+  )
 }
 
 export default App;
