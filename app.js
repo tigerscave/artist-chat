@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const pg = require('pg');
+const cors = require('cors')
 
 
 var indexRouter = require('./routes/index');
@@ -17,23 +18,25 @@ const fs = require('fs')
 //   console.log('connected')
 // })
 
-const allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, access_token'
-  )
+app.use(cors())
+
+// const allowCrossDomain = function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'Content-Type, Authorization, access_token'
+//   )
 
 
-  // intercept OPTIONS method
-  if ('OPTIONS' === req.method) {
-    res.send(200)
-  } else {
-    next()
-  }
-}
-app.use(allowCrossDomain)
+//   // intercept OPTIONS method
+//   if ('OPTIONS' === req.method) {
+//     res.send(200)
+//   } else {
+//     next()
+//   }
+// }
+// app.use(allowCrossDomain)
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -53,32 +56,30 @@ app.use('/users', usersRouter);
 
 
 
-app.use('/create', function(req, res, next) {
-  const pool = new pg.Pool({
-    host: "localhost",
-    database: "artist_chat",
-    user: "enoki",
-    port: 5432
-  })
-  pool.connect()
+const pool = new pg.Pool({
+  host: "localhost",
+  database: "artist_chat",
+  user: "enoki",
+  port: 5432
+})
+pool.connect()
 
+app.post('/room', function(req, res, next) {
   const sqlCreate = "INSERT INTO users (name, email) VALUES ($1, $2)"
   const values = [req.body.name, 'email']
   pool.query(sqlCreate, values)
-    .then(res => {
-        pool.end()
-    })
-    .catch(e => console.error(e.stack))
+  .then()
+  .catch(e => console.error(e.stack))
 })
 
 
 
-app.use('/get', (req, res, next) => {
-  pool.query("SELECT name FROM users", (err, result) => {
+app.get('/room', (req, res, next) => {
+  pool.query("SELECT * FROM users", (err, result) => {
     console.log(result.rows)
     datas = result.rows
-    res.json(datas)
-  }).then(res => {pool.end()})
+  })
+  res.json(datas)
 })
 
 // catch 404 and forward to error handler

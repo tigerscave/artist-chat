@@ -13,16 +13,20 @@ const CreateRoom = () => {
   }
 
   const CreateRoomButton = () => {
-    fetch('http://localhost:3001/create', params)
+    fetch('http://localhost:3001/room', params)
       .then(res => res.json())
       .then()
   }
 
   const getRoomName = () => {
-    fetch('http://localhost:3001/get')
+    fetch('http://localhost:3001/room', {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+    })
       .then(res => res.json())
-      .then(data => setDatas(data))
-      console.log(datas)
+      .then(data => console.log(data))
   }
 
   return (
