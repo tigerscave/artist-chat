@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import {withRouter, Link} from 'react-router-dom'
 
-const Index = () => {
+const Index = (props) => {
   const [comment, setComment] = useState('2')
 
   useEffect(() => {
@@ -9,7 +10,19 @@ const Index = () => {
       .then(users => setComment(users.id))
   }, [])
 
-  return <h1>Hello! {comment}</h1>
+  const goCreateRoom = () => {
+    console.log(props)
+  }
+
+  return (
+  <>
+    <h1>Hello! {comment}</h1>
+    <p>Go to Create Room Page</p>
+    <Link to ="/CreateRoom">
+      <button>Create Room</button>
+    </Link>
+  </>
+  )
 }
 
-export default Index;
+export default withRouter(Index);
