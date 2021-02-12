@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import {useLocation} from 'react-router-dom'
 
 const EnterRoom = () => {
-  const [comment, setComment] = useState('2')
+  console.log("------")
+  console.log(useLocation())
 
-  useEffect(() => {
-    fetch('http://localhost:3001/')
-      .then(res => res.json())
-      .then(users => setComment(users.id))
-  }, [])
-
-  return <h1>This is EnterRoom, {comment}</h1>
+  return <h1>This is EnterRoom to {useLocation().state.name}</h1>
 }
 
 export default EnterRoom;

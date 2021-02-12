@@ -65,17 +65,15 @@ const pool = new pg.Pool({
 pool.connect()
 
 app.post('/room', function(req, res, next) {
-  const sqlCreate = "INSERT INTO users (name, email) VALUES ($1, $2)"
-  const values = [req.body.name, 'email']
+  const sqlCreate = "INSERT INTO rooms (name, email, delete_password) VALUES ($1, $2, $3)"
+  const values = [req.body.name, req.body.email, req.body.deletePassword]
   pool.query(sqlCreate, values)
   .then()
   .catch(e => console.error(e.stack))
 })
 
-
-
 app.get('/room', (req, res, next) => {
-  pool.query("SELECT * FROM users", (err, result) => {
+  pool.query("SELECT * FROM rooms", (err, result) => {
     console.log(result.rows)
     datas = result.rows
   })
