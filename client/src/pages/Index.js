@@ -22,7 +22,6 @@ const Index = (props) => {
   <>
     <h1>Hello!</h1>
     {rooms.map(room => {
-      console.log(room)
       return (
       <p key={room.id}>
         <Link to={{

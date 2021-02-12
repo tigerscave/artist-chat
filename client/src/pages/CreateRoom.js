@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import {Link} from 'react-router-dom';
 
 const CreateRoom = () => {
   const [name, setName] = useState('NoName')
   const [email, setEmail] = useState('email')
   const [deletePassword, setDeletePassword] = useState('deletePassword')
-  const [datas, setDatas] = useState([])
+  const [rooms, setRooms] = useState([])
 
   const params = {
     method: "POST",
@@ -24,7 +25,7 @@ const CreateRoom = () => {
       .then()
   }
 
-  const getRoomName = () => {
+  useEffect(() => {
     fetch('http://localhost:3001/room', {
       method: "GET",
       headers: {
@@ -32,8 +33,8 @@ const CreateRoom = () => {
       },
     })
       .then(res => res.json())
-      .then(data => console.log(data))
-  }
+      .then(data => setRooms(data))
+  }, [CreateRoomButton])
 
   const inputRoom = (setText) => e => {
     e.preventDefault();
@@ -58,8 +59,14 @@ const CreateRoom = () => {
         value={deletePassword}
         onChange={inputRoom(setDeletePassword)}
       ></input>
+      <Link to="/">to Top</Link>
       <button onClick={CreateRoomButton}>CreateRoom</button>
-      <button onClick={getRoomName}>getRoomName</button>
+      <p>---rooms---</p>
+      {rooms.map((room) => {
+        return (
+          <p key={room.id}>{room.name}</p>
+        )
+      })}
     </>
   )
 }
