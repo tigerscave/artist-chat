@@ -5,48 +5,32 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const pg = require('pg');
 const cors = require('cors')
-
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
-const http = require('http').Server(app)
-const io = require('socket.io')
-const fs = require('fs')
-// io.on('connection', function (socket) {
-//   console.log('connected')
-// })
+const app = express();
 
 app.use(cors())
-
-// const allowCrossDomain = function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-//   res.header(
-//     'Access-Control-Allow-Headers',
-//     'Content-Type, Authorization, access_token'
-//   )
-
-
-//   // intercept OPTIONS method
-//   if ('OPTIONS' === req.method) {
-//     res.send(200)
-//   } else {
-//     next()
-//   }
-// }
-// app.use(allowCrossDomain)
-
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+
+const socket = require('socket.io')
+const server = app.listen(3001, () => console.log('Server running on port 3001'))
+const io = socket(server, {
+  cors: {
+    origin: 'http://localhost:3002',
+    methods: ["GET", "POST"]
+  }
+});
+io.on('connection', (socket) => {
+  console.log('connected')
+  socket.on('SEND_MESSAGE', (data) => {
+    io.emit('RECEIVE_MESSAGE', data);
+  })
+})
 
 let datas = []
 
@@ -74,7 +58,6 @@ app.post('/room', function(req, res, next) {
 
 app.get('/room', (req, res, next) => {
   pool.query("SELECT * FROM rooms", (err, result) => {
-    console.log(result.rows)
     datas = result.rows
   })
   res.json(datas)
@@ -96,6 +79,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(3001, () => console.log('Server running on port 3001'))
+// http.listen(3003, () => console.log('Socket server running or port 3003'))
+
+// app.listen(3001, () => console.log('Server running on port 3001'))
 
 module.exports = app;

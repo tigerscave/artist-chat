@@ -34,7 +34,7 @@ const CreateRoom = () => {
     })
       .then(res => res.json())
       .then(data => setRooms(data))
-  }, [CreateRoomButton])
+  }, [])
 
   const inputRoom = (setText) => e => {
     e.preventDefault();

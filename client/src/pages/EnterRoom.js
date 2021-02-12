@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import {Link, useLocation} from 'react-router-dom'
 
 const EnterRoom = () => {
   const [username, setUsername] = useState('your name')
-  console.log("------")
-  console.log(useLocation())
 
   return (
     <>
