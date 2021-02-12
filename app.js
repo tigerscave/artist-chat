@@ -19,6 +19,7 @@ var usersRouter = require('./routes/users');
 
 const socket = require('socket.io')
 const server = app.listen(3001, () => console.log('Server running on port 3001'))
+
 const io = socket(server, {
   cors: {
     origin: 'http://localhost:3002',
@@ -28,6 +29,7 @@ const io = socket(server, {
 io.on('connection', (socket) => {
   console.log('connected')
   socket.on('SEND_MESSAGE', (data) => {
+    console.log(data)
     io.emit('RECEIVE_MESSAGE', data);
   })
 })
@@ -78,9 +80,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-// http.listen(3003, () => console.log('Socket server running or port 3003'))
-
-// app.listen(3001, () => console.log('Server running on port 3001'))
 
 module.exports = app;

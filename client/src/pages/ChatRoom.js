@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {Link, useLocation} from 'react-router-dom'
 import io from 'socket.io-client'
+const socket = io('localhost:3001');
 
 const ChatRoom = () => {
   const [message, setMessage] = useState('')
 
   const username = useLocation().state.username
-  const socket = io('localhost:3001');
   const onSendButton = () => {
     socket.emit('SEND_MESSAGE', {
       user: username,
