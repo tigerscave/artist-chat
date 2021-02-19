@@ -26,6 +26,7 @@ const io = socket(server, {
     methods: ["GET", "POST"]
   }
 });
+
 io.on('connection', (socket) => {
   console.log('connected')
   socket.on('SEND_MESSAGE', (data) => {
