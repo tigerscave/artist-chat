@@ -14,7 +14,10 @@ const Index = (props) => {
   useEffect(() => {
     fetch('http://localhost:3001/room', params)
       .then(res => res.json())
-      .then(data => setRooms(data))
+      .then(data => {
+        setRooms(data)
+        console.log(data)
+      })
     }, [])
     
     console.log(rooms)

@@ -3,10 +3,12 @@ import {Link, useLocation} from 'react-router-dom'
 
 const EnterRoom = () => {
   const [username, setUsername] = useState('your name')
+  const room = useLocation().state.name
+  const roomID = useLocation().state.id
 
   return (
     <>
-      <h1>This is EnterRoom to {useLocation().state.name}</h1>
+      <h1>This is EnterRoom to {room}</h1>
       <input type='text' value={username} onChange={(e) => {
         e.preventDefault();
         setUsername(e.target.value);
@@ -15,7 +17,7 @@ const EnterRoom = () => {
       <Link to={{
         pathname: "/ChatRoom",
         state: {
-          username: username
+          username, room, roomID
         }
       }}>
         Enter Chat Room

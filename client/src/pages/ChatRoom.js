@@ -6,30 +6,30 @@ const socket = io('localhost:3001');
 const ChatRoom = () => {
   const [message, setMessage] = useState('')
   const [chat, setChat] = useState([])
-  
-  const username = useLocation().state.username
+  const {username, room, roomID} = useLocation().state
 
-    useEffect(() => {
-      socket.on('RECEIVE_MESSAGE', data => {
-        console.log(data)
-        setChat(prevChat => ([...prevChat, data]))
-      })
-    }, [])
+  useEffect(() => {
+    socket.on('RECEIVE_MESSAGE', data => {
+      console.log(data)
+      setChat(prevChat => ([...prevChat, data]))
+    })
+
+    socket.emit("JOIN", {
+      user: username,
+      room: room,
+      roomID: roomID,
+      text: "- " + username + " joins -"
+    })
+  }, [])
 
   const onSendButton = () => {
     socket.emit('SEND_MESSAGE', {
       user: username,
+      room: room,
+      roomID: roomID,
       text: message
     })
   }
-
-  // socket.on('RECEIVE_MESSAGE', (data) => {
-  //   console.log(chat)
-  //   setChat([...chat, data])
-  // })
-
-
-  // console.log(chat)
 
   return (
     <>
