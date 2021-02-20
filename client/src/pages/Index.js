@@ -4,23 +4,45 @@ import {withRouter, Link} from 'react-router-dom'
 const Index = (props) => {
   const [rooms, setRooms] = useState([])
 
-  const params = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8"
-    }
-  }
-
   useEffect(() => {
+    const params = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      }
+    }
     fetch('http://localhost:3001/room', params)
       .then(res => res.json())
       .then(data => {
         setRooms(data)
         console.log(data)
       })
-    }, [])
-    
-    console.log(rooms)
+  }, [])
+
+  const onDeleteButtonClick = (id) => () => {
+    const deletePassword = prompt('削除用パスワードを入力してください', 'deletePassword')
+    const params = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify({
+        roomID: id,
+        deletePassword
+      })
+    }
+
+    fetch('http://localhost:3001/room', params)
+      .then(res => res.json())
+      .then(data => {
+        if (typeof(data) === "string") {
+          alert(data)
+        } else {
+          setRooms(data)
+        }
+      })
+  }
+
   return (
   <>
     <h1>Hello!</h1>
@@ -36,6 +58,7 @@ const Index = (props) => {
         }}>
           {room.name}
         </Link>
+        <button onClick={onDeleteButtonClick(room.id)} key={room.id}>削除</button>
       </p>
       )
     })}

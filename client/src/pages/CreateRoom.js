@@ -22,7 +22,13 @@ const CreateRoom = () => {
   const CreateRoomButton = () => {
     fetch('http://localhost:3001/room', params)
       .then(res => res.json())
-      .then()
+      .then(data => {
+        if (typeof(data) === "string") {
+          alert(data)
+        } else {
+          setRooms(data)
+        }
+      })
   }
 
   useEffect(() => {

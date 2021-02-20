@@ -41,7 +41,10 @@ const ChatRoom = () => {
 
   return (
     <>
-      <h1>This is {room} ChatRoom, {username} {message}</h1>
+      <h1>This is {room} ChatRoom, {username}</h1>
+      <p>
+      <Link>to Top</Link>
+      </p>
       <input type='text' onChange={(e) => setMessage(e.target.value)}></input>
       <button onClick={onSendButton}>Send message</button>
       {chat.map(messages => {
@@ -50,7 +53,7 @@ const ChatRoom = () => {
           {messages.text}
       </p>
       )
-    })}
+      })}
     </>
   )
 }

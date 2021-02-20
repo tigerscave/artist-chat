@@ -14,7 +14,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const roomRouter = require('./routes/room')
 
 const socket = require('socket.io')
@@ -58,32 +57,9 @@ io.on('connection', (socket) => {
 })
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.get('/room', roomRouter)
-app.post('/room', roomRouter)
-
-// const pool = new pg.Pool({
-//   host: "localhost",
-//   database: "artist_chat",
-//   user: "enoki",
-//   port: 5432
-// })
-// pool.connect()
-
-// app.post('/room', function(req, res, next) {
-//   const sqlCreate = "INSERT INTO rooms (name, email, delete_password) VALUES ($1, $2, $3)"
-//   const values = [req.body.name, req.body.email, req.body.deletePassword]
-//   pool.query(sqlCreate, values)
-//   .then()
-//   .catch(e => console.error(e.stack))
-// })
-
-// app.get('/room', (req, res, next) => {
-//   pool.query("SELECT * FROM rooms", (err, result) => {
-//     datas = result.rows
-//     res.json(datas)
-//   })
-// })
+app.get('/room', roomRouter);
+app.post('/room', roomRouter);
+app.delete('/room', roomRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
