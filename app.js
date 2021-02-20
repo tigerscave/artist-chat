@@ -29,6 +29,7 @@ const io = socket(server, {
 
 io.on('connection', (socket) => {
   console.log('connected')
+  let username = ''
 
   socket.on('SEND_MESSAGE', (data) => {
     console.log(data)
@@ -36,8 +37,23 @@ io.on('connection', (socket) => {
   })
 
   socket.on('JOIN', (data) => {
+    username = data.username;
     socket.join(data.roomID)
     io.to(data.roomID).emit('RECEIVE_MESSAGE', data);
+  })
+
+  socket.on('disconnect', () => {
+    console.log(username)
+    if (username) {
+      io.to(data.roomID).emit(
+        'RECEIVE_MESSAGE', {
+          username,
+          room,
+          roomID,
+          text: "- " + username + "leave -"
+        }
+      )
+    }
   })
 })
 

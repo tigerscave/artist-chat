@@ -15,25 +15,33 @@ const ChatRoom = () => {
     })
 
     socket.emit("JOIN", {
-      user: username,
+      username: username,
       room: room,
       roomID: roomID,
       text: "- " + username + " joins -"
     })
+    return () => {
+      socket.emit('SEND_MESSAGE', {
+        username: username,
+        room: room,
+        roomID: roomID,
+        text: "- " + username + " leaves -"
+      })
+    }
   }, [])
 
   const onSendButton = () => {
     socket.emit('SEND_MESSAGE', {
-      user: username,
+      username: username,
       room: room,
       roomID: roomID,
-      text: message
+      text: username + ": " + message
     })
   }
 
   return (
     <>
-      <h1>This is ChatRoom, {username} {message}</h1>
+      <h1>This is {room} ChatRoom, {username} {message}</h1>
       <input type='text' onChange={(e) => setMessage(e.target.value)}></input>
       <button onClick={onSendButton}>Send message</button>
       {chat.map(messages => {
