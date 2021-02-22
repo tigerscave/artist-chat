@@ -14,7 +14,7 @@ let datas = []
 let rowCount = 0;
 
 app.post('/room', (req, res, next) => {
-  const sqlCreate = "INSERT INTO rooms (name, email, delete_password) VALUES ($1, $2, $3)"
+  const sqlCreate = "INSERT INTO rooms (name, email, delete_password) VALUES ($1, $2, crypt($3, gen_salt('bf')))"
   const values = [req.body.name, req.body.email, req.body.deletePassword]
   pool.query(sqlCreate, values)
     .then(result => {
@@ -39,7 +39,7 @@ app.get('/room', (req, res, next) => {
 })
 
 app.delete('/room', (req, res, next) => {
-  const sqlDelete = "DELETE FROM rooms WHERE id = $1 AND delete_password = $2"
+  const sqlDelete = "DELETE FROM rooms WHERE id = $1 AND delete_password = crypt($2, delete_password)"
   const values = [req.body.roomID, req.body.deletePassword]
   pool.query(sqlDelete, values)
     .then(result => {
