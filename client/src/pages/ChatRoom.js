@@ -10,7 +10,6 @@ const ChatRoom = () => {
 
   useEffect(() => {
     socket.on('RECEIVE_MESSAGE', data => {
-      console.log(data)
       setChat(prevChat => ([...prevChat, data]))
     })
 

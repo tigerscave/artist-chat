@@ -15,7 +15,6 @@ const Index = (props) => {
       .then(res => res.json())
       .then(data => {
         setRooms(data)
-        console.log(data)
       })
   }, [])
 
