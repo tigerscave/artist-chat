@@ -1,68 +1,65 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-const pg = require('pg');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors')
+const app = express();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
-
-const allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, access_token'
-  )
-
-  // intercept OPTIONS method
-  if ('OPTIONS' === req.method) {
-    res.send(200)
-  } else {
-    next()
-  }
-}
-app.use(allowCrossDomain)
-
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-
+app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const pool = new pg.Pool({
-  host: "localhost",
-  database: "artist_chat",
-  user: "enoki",
-  port: 5432
+const indexRouter = require('./routes/index');
+const roomRouter = require('./routes/room')
+
+const socket = require('socket.io')
+const server = app.listen(3001, () => console.log('Server running on port 3001'))
+
+const io = socket(server, {
+  cors: {
+    origin: 'http://localhost:3002',
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('connected')
+  let username = ''
+
+  socket.on('SEND_MESSAGE', (data) => {
+    console.log(data)
+    io.to(data.roomID).emit('RECEIVE_MESSAGE', data);
+  })
+
+  socket.on('JOIN', (data) => {
+    username = data.username;
+    socket.join(data.roomID)
+    io.to(data.roomID).emit('RECEIVE_MESSAGE', data);
+  })
+
+  socket.on('disconnect', () => {
+    console.log(username)
+    if (username) {
+      io.to(data.roomID).emit(
+        'RECEIVE_MESSAGE', {
+          username,
+          room,
+          roomID,
+          text: "- " + username + "leave -"
+        }
+      )
+    }
+  })
 })
-
-pool.connect()
-
-pool.query('SELECT NOW()', (err, res) => {
-  //console.log(err, res)
-  console.log(res.rows[0])
-  pool.end()
-})
-
-const sql = "INSERT INTO users (name, email) VALUES ($1, $2)"
-const values = ['Enoki', 'EnokiEnoki']
-pool.query(sql, values)
-    .then(res => {
-        console.log(res)
-        pool.end()
-    })
-    .catch(e => console.error(e.stack))
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.get('/room', roomRouter);
+app.post('/room', roomRouter);
+app.delete('/room', roomRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -79,7 +76,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-app.listen(3001, () => console.log('Server running on port 3001'))
 
 module.exports = app;
